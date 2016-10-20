@@ -136,7 +136,7 @@ class FFMPEG_AudioWriter:
 def ffmpeg_audiowrite(clip, filename, fps, nbytes, buffersize,
                       codec='libvorbis', bitrate=None,
                       write_logfile = False, verbose=True,
-                      ffmpeg_params=None):
+                      ffmpeg_params=None, progress_bar=False):
     """
     A function that wraps the FFMPEG_AudioWriter to write an AudioClip
     to a file.
@@ -157,7 +157,7 @@ def ffmpeg_audiowrite(clip, filename, fps, nbytes, buffersize,
     
     
     for chunk in clip.iter_chunks(chunksize=buffersize,
-                                  progress_bar=True, quantize=True,
+                                  progress_bar=progress_bar, quantize=True,
                                   nbytes= nbytes, fps=fps):
         writer.write_frames(chunk)
 

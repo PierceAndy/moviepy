@@ -153,32 +153,31 @@ def ffmpeg_audiowrite(clip, filename, fps, nbytes, buffersize,
                                 codec=codec, bitrate=bitrate,
                                 logfile=logfile,
                                 ffmpeg_params=ffmpeg_params)
-
     
-    
-    for chunk in clip.iter_chunks(chunksize=buffersize,
-                                  progress_bar=progress_bar, quantize=True,
-                                  nbytes= nbytes, fps=fps):
-        writer.write_frames(chunk)
+    try:
+        for chunk in clip.iter_chunks(chunksize=buffersize,
+                                      progress_bar=progress_bar, quantize=True,
+                                      nbytes= nbytes, fps=fps):
+            writer.write_frames(chunk)
 
-    """
-    totalsize = int(fps*clip.duration)
+        """
+        totalsize = int(fps*clip.duration)
 
-    if (totalsize % buffersize == 0):
-        nchunks = totalsize // buffersize
-    else:
-        nchunks = totalsize // buffersize + 1
+        if (totalsize % buffersize == 0):
+            nchunks = totalsize // buffersize
+        else:
+            nchunks = totalsize // buffersize + 1
 
-    pospos = list(range(0, totalsize,  buffersize))+[totalsize]
-    for i in tqdm(range(nchunks)):
-        tt = (1.0/fps)*np.arange(pospos[i],pospos[i+1])
-        sndarray = clip.to_soundarray(tt, nbytes= nbytes)
-        writer.write_frames(sndarray)
-    """
+        pospos = list(range(0, totalsize,  buffersize))+[totalsize]
+        for i in tqdm(range(nchunks)):
+            tt = (1.0/fps)*np.arange(pospos[i],pospos[i+1])
+            sndarray = clip.to_soundarray(tt, nbytes= nbytes)
+            writer.write_frames(sndarray)
+        """
+    finally:
+        writer.close()
 
-    writer.close()
+        if write_logfile:
+            logfile.close()
 
-    if write_logfile:
-        logfile.close()
-
-    verbose_print(verbose, "[MoviePy] Done.\n")
+        verbose_print(verbose, "[MoviePy] Done.\n")
